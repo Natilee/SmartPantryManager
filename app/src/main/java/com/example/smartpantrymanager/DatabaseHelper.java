@@ -25,7 +25,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_UNIT = "unit";
     private static final String COLUMN_EXPIRY = "expiryDate";
 
-
     // =========================================================
     // RECIPES TABLE
     // =========================================================
@@ -36,7 +35,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String RECIPE_NAME = "recipe_name";
     private static final String RECIPE_INGREDIENTS = "recipe_ingredients";
     private static final String RECIPE_METHOD = "recipe_method";
-
 
     // =========================================================
     // CONSTRUCTOR
@@ -51,7 +49,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 DATABASE_VERSION
         );
     }
-
 
     // =========================================================
     // CREATE DATABASE
@@ -74,7 +71,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createIngredientTable);
 
-
         // -----------------------------------------------------
         // RECIPE TABLE
         // -----------------------------------------------------
@@ -89,14 +85,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(createRecipeTable);
 
-
         // -----------------------------------------------------
         // ADD RECIPES
         // -----------------------------------------------------
 
         seedRecipes(db);
     }
-
 
     // =========================================================
     // DATABASE UPGRADE
@@ -107,7 +101,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db,
             int oldVersion,
             int newVersion) {
-
 
         // -----------------------------------------------------
         // VERSION 1 → VERSION 2
@@ -140,7 +133,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             );
         }
 
-
         // -----------------------------------------------------
         // VERSION 2 → VERSION 3
         // -----------------------------------------------------
@@ -166,20 +158,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             seedRecipes(db);
         }
 
-
         // -----------------------------------------------------
         // VERSION 3 → VERSION 4
         // -----------------------------------------------------
-        //
-        // Update recipe quantities.
-        //
-        // IMPORTANT:
-        // We only delete and recreate the RECIPES.
-        // Pantry ingredients are NOT deleted.
-        //
-        // -----------------------------------------------------
 
         if (oldVersion < 4) {
+
+            // Only recipes are recreated.
+            // Pantry ingredients are preserved.
 
             db.delete(
                     TABLE_RECIPES,
@@ -190,7 +176,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             seedRecipes(db);
         }
     }
-
 
     // =========================================================
     // ADD INGREDIENT
@@ -205,10 +190,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db =
                 this.getWritableDatabase();
 
-
         ContentValues values =
                 new ContentValues();
-
 
         values.put(
                 COLUMN_NAME,
@@ -230,7 +213,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 expiryDate
         );
 
-
         long result =
                 db.insert(
                         TABLE_INGREDIENTS,
@@ -238,12 +220,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         values
                 );
 
-
         db.close();
 
         return result;
     }
-
 
     // =========================================================
     // GET ALL INGREDIENTS
@@ -254,10 +234,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<PantryItem> ingredients =
                 new ArrayList<>();
 
-
         SQLiteDatabase db =
                 this.getReadableDatabase();
-
 
         Cursor cursor =
                 db.rawQuery(
@@ -279,28 +257,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         null
                 );
 
-
         while (cursor.moveToNext()) {
 
             int id =
                     cursor.getInt(0);
 
-
             String name =
                     cursor.getString(1);
-
 
             double quantity =
                     cursor.getDouble(2);
 
-
             String unit =
                     cursor.getString(3);
 
-
             String expiryDate =
                     cursor.getString(4);
-
 
             PantryItem item =
                     new PantryItem(
@@ -311,19 +283,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             expiryDate
                     );
 
-
             ingredients.add(item);
         }
-
 
         cursor.close();
 
         db.close();
 
-
         return ingredients;
     }
-
 
     // =========================================================
     // UPDATE INGREDIENT
@@ -336,14 +304,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String unit,
             String expiryDate) {
 
-
         SQLiteDatabase db =
                 this.getWritableDatabase();
 
-
         ContentValues values =
                 new ContentValues();
-
 
         values.put(
                 COLUMN_NAME,
@@ -365,28 +330,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 expiryDate
         );
 
-
         int result =
                 db.update(
-
                         TABLE_INGREDIENTS,
-
                         values,
-
                         COLUMN_ID + "=?",
-
                         new String[]{
                                 String.valueOf(id)
                         }
                 );
 
-
         db.close();
-
 
         return result > 0;
     }
-
 
     // =========================================================
     // DELETE INGREDIENT
@@ -397,26 +354,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db =
                 this.getWritableDatabase();
 
-
         int result =
                 db.delete(
-
                         TABLE_INGREDIENTS,
-
                         COLUMN_ID + "=?",
-
                         new String[]{
                                 String.valueOf(id)
                         }
                 );
 
-
         db.close();
-
 
         return result > 0;
     }
-
 
     // =========================================================
     // CLEAR ALL INGREDIENTS
@@ -427,17 +377,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db =
                 this.getWritableDatabase();
 
-
         db.delete(
                 TABLE_INGREDIENTS,
                 null,
                 null
         );
 
-
         db.close();
     }
-
 
     // =========================================================
     // GET ALL RECIPES
@@ -448,10 +395,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Recipe> recipes =
                 new ArrayList<>();
 
-
         SQLiteDatabase db =
                 this.getReadableDatabase();
-
 
         Cursor cursor =
                 db.rawQuery(
@@ -472,24 +417,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         null
                 );
 
-
         while (cursor.moveToNext()) {
 
             int id =
                     cursor.getInt(0);
 
-
             String name =
                     cursor.getString(1);
-
 
             String ingredients =
                     cursor.getString(2);
 
-
             String method =
                     cursor.getString(3);
-
 
             Recipe recipe =
                     new Recipe(
@@ -499,19 +439,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             method
                     );
 
-
             recipes.add(recipe);
         }
-
 
         cursor.close();
 
         db.close();
 
-
         return recipes;
     }
 
+    // =========================================================
+    // COUNT RECIPES
+    // =========================================================
+
+    public int getRecipeCount() {
+
+        SQLiteDatabase db =
+                this.getReadableDatabase();
+
+        Cursor cursor =
+                db.rawQuery(
+                        "SELECT COUNT(*) FROM " +
+                                TABLE_RECIPES,
+                        null
+                );
+
+        int count = 0;
+
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+
+        db.close();
+
+        return count;
+    }
 
     // =========================================================
     // ADD RECIPE
@@ -523,10 +488,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             String ingredients,
             String method) {
 
-
         ContentValues values =
                 new ContentValues();
-
 
         values.put(
                 RECIPE_NAME,
@@ -543,7 +506,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 method
         );
 
-
         db.insert(
                 TABLE_RECIPES,
                 null,
@@ -551,25 +513,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
     }
 
-
     // =========================================================
     // SEED RECIPES
     // =========================================================
 
     private void seedRecipes(SQLiteDatabase db) {
 
-
-        // =====================================================
-        // 1. CHICKEN BOWL
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken Bowl",
-
                 "Chicken:1;Rice:1;Avo:0.5;Feta Cheese:0.25",
-
                 "Cook the chicken until fully cooked. " +
                         "Prepare the rice. " +
                         "Slice half an avocado. " +
@@ -577,284 +530,148 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "then add the avocado and feta cheese."
         );
 
-
-        // =====================================================
-        // 2. STEAK & CORN
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Steak & Corn",
-
                 "Steak:1;Corn:1",
-
                 "Cook the steak to your preferred level. " +
                         "Heat the corn and serve together."
         );
 
-
-        // =====================================================
-        // 3. BEEF BURGER
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Beef Burger",
-
                 "Beef patties:1;Cheese:1;Hamburger rolls:1;Onion:0.5",
-
                 "Cook the beef patty thoroughly. " +
                         "Toast the hamburger roll. " +
                         "Add the beef patty, cheese and sliced onion."
         );
 
-
-        // =====================================================
-        // 4. CHEESY STEAK & POTATOES
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Cheesy Steak & Potatoes",
-
                 "Steak:1;Potatoes:2;Cheese:1",
-
                 "Cook the steak to your preferred level. " +
                         "Boil or roast the potatoes until tender. " +
                         "Add cheese and serve with the steak."
         );
 
-
-        // =====================================================
-        // 5. CHICKEN & FETA WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken & Feta Wrap",
-
                 "Chicken:1;Wraps:1;Feta Cheese:0.25",
-
                 "Cook the chicken and slice it. " +
                         "Place the chicken and feta cheese inside a wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 6. BEEF & CHEESE WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Beef & Cheese Wrap",
-
                 "Beef patties:1;Wraps:1;Cheese:1",
-
                 "Cook the beef patty and slice it. " +
                         "Place the beef and cheese inside a wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 7. CHICKEN AVO WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken Avo Wrap",
-
                 "Chicken:1;Wraps:1;Avo:0.5",
-
                 "Cook and slice the chicken. " +
                         "Add the chicken and avocado to a wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 8. CHICKEN & CHEESE WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken & Cheese Wrap",
-
                 "Chicken:1;Wraps:1;Cheese:1",
-
                 "Cook the chicken. " +
                         "Place the chicken and cheese inside a wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 9. STEAK & CHEESE WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Steak & Cheese Wrap",
-
                 "Steak:1;Wraps:1;Cheese:1",
-
                 "Cook and slice the steak. " +
                         "Add the steak and cheese to a wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 10. BEEF & ONION WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Beef & Onion Wrap",
-
                 "Beef patties:1;Wraps:1;Onion:0.5",
-
                 "Cook the beef patty and slice it. " +
                         "Add the beef and sliced onion to the wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 11. CHICKEN RICE BOWL
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken Rice Bowl",
-
                 "Chicken:1;Rice:1",
-
                 "Cook the chicken thoroughly. " +
                         "Prepare the rice and serve the chicken over the rice."
         );
 
-
-        // =====================================================
-        // 12. CHEESY CHICKEN RICE
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Cheesy Chicken Rice",
-
                 "Chicken:1;Rice:1;Cheese:1",
-
                 "Cook the chicken and prepare the rice. " +
                         "Combine them and add cheese on top."
         );
 
-
-        // =====================================================
-        // 13. STEAK & POTATOES
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Steak & Potatoes",
-
                 "Steak:1;Potatoes:2",
-
                 "Cook the steak. " +
                         "Boil or roast the potatoes until tender. " +
                         "Serve together."
         );
 
-
-        // =====================================================
-        // 14. BEEF & CHEESE
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Beef & Cheese",
-
                 "Beef patties:1;Cheese:1",
-
                 "Cook the beef patty thoroughly. " +
                         "Add cheese while the patty is hot and serve."
         );
 
-
-        // =====================================================
-        // 15. CHICKEN & AVOCADO
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken & Avocado",
-
                 "Chicken:1;Avo:0.5",
-
                 "Cook and slice the chicken. " +
                         "Slice half an avocado and serve together."
         );
 
-
-        // =====================================================
-        // 16. CHEESY STEAK
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Cheesy Steak",
-
                 "Steak:1;Cheese:1",
-
                 "Cook the steak to your preferred level. " +
                         "Add cheese on top and allow it to melt."
         );
 
-
-        // =====================================================
-        // 17. BEEF & AVOCADO WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Beef & Avocado Wrap",
-
                 "Beef patties:1;Wraps:1;Avo:0.5",
-
                 "Cook the beef patty and slice it. " +
                         "Add the beef and avocado to a wrap. " +
                         "Fold and serve."
         );
 
-
-        // =====================================================
-        // 18. CHICKEN & ONION WRAP
-        // =====================================================
-
         addRecipe(
                 db,
-
                 "Chicken & Onion Wrap",
-
                 "Chicken:1;Wraps:1;Onion:0.5",
-
                 "Cook the chicken and slice it. " +
                         "Add the chicken and sliced onion to the wrap. " +
                         "Fold and serve."
