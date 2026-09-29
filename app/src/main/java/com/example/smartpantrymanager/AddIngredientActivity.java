@@ -28,39 +28,60 @@ public class AddIngredientActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_add_ingredient);
+        setContentView(
+                R.layout.activity_add_ingredient
+        );
 
 
+        // =====================================================
         // FIND VIEWS
+        // =====================================================
 
         etIngredientName =
-                findViewById(R.id.etIngredientName);
+                findViewById(
+                        R.id.etIngredientName
+                );
 
         etQuantity =
-                findViewById(R.id.etQuantity);
+                findViewById(
+                        R.id.etQuantity
+                );
 
         etExpiryDate =
-                findViewById(R.id.etExpiryDate);
+                findViewById(
+                        R.id.etExpiryDate
+                );
 
         spinnerUnit =
-                findViewById(R.id.spinnerUnit);
+                findViewById(
+                        R.id.spinnerUnit
+                );
 
         btnSaveIngredient =
-                findViewById(R.id.btnSaveIngredient);
+                findViewById(
+                        R.id.btnSaveIngredient
+                );
 
         btnCancel =
-                findViewById(R.id.btnCancel);
+                findViewById(
+                        R.id.btnCancel
+                );
 
 
+        // =====================================================
         // DATABASE
+        // =====================================================
 
         databaseHelper =
                 new DatabaseHelper(this);
 
 
+        // =====================================================
         // UNIT OPTIONS
+        // =====================================================
 
         String[] units = {
                 "pieces",
@@ -88,10 +109,14 @@ public class AddIngredientActivity extends AppCompatActivity {
         );
 
 
-        spinnerUnit.setAdapter(unitAdapter);
+        spinnerUnit.setAdapter(
+                unitAdapter
+        );
 
 
-        // CHECK IF WE ARE EDITING
+        // =====================================================
+        // CHECK IF EDITING
+        // =====================================================
 
         if (getIntent().hasExtra("ingredient_id")) {
 
@@ -101,10 +126,12 @@ public class AddIngredientActivity extends AppCompatActivity {
                             -1
                     );
 
+
             String name =
                     getIntent().getStringExtra(
                             "ingredient_name"
                     );
+
 
             double quantity =
                     getIntent().getDoubleExtra(
@@ -112,10 +139,12 @@ public class AddIngredientActivity extends AppCompatActivity {
                             1
                     );
 
+
             String unit =
                     getIntent().getStringExtra(
                             "ingredient_unit"
                     );
+
 
             String expiryDate =
                     getIntent().getStringExtra(
@@ -123,26 +152,38 @@ public class AddIngredientActivity extends AppCompatActivity {
                     );
 
 
-            // PUT EXISTING DATA INTO FORM
+            // Put existing information into form
 
-            etIngredientName.setText(name);
+            if (name != null) {
+
+                etIngredientName.setText(
+                        name
+                );
+            }
+
 
             etQuantity.setText(
                     String.valueOf(quantity)
             );
 
-            etExpiryDate.setText(
-                    expiryDate
-            );
+
+            if (expiryDate != null) {
+
+                etExpiryDate.setText(
+                        expiryDate
+                );
+            }
 
 
-            // SELECT EXISTING UNIT
+            // Select existing unit
 
             if (unit != null) {
 
-                for (int i = 0; i < units.length; i++) {
+                for (int i = 0;
+                     i < units.length;
+                     i++) {
 
-                    if (units[i].equals(unit)) {
+                    if (units[i].equalsIgnoreCase(unit)) {
 
                         spinnerUnit.setSelection(i);
 
@@ -152,30 +193,37 @@ public class AddIngredientActivity extends AppCompatActivity {
             }
 
 
-            // CHANGE BUTTON TEXT
-
             btnSaveIngredient.setText(
                     "UPDATE INGREDIENT"
             );
         }
 
 
-        // SAVE / UPDATE BUTTON
+        // =====================================================
+        // SAVE / UPDATE
+        // =====================================================
 
-        btnSaveIngredient.setOnClickListener(v ->
-                saveIngredient()
+        btnSaveIngredient.setOnClickListener(
+                v -> saveIngredient()
         );
 
 
-        // CANCEL BUTTON
+        // =====================================================
+        // CANCEL
+        // =====================================================
 
-        btnCancel.setOnClickListener(v ->
-                finish()
+        btnCancel.setOnClickListener(
+                v -> finish()
         );
     }
 
 
+    // =========================================================
+    // SAVE INGREDIENT
+    // =========================================================
+
     private void saveIngredient() {
+
 
         String name =
                 etIngredientName
@@ -194,7 +242,8 @@ public class AddIngredientActivity extends AppCompatActivity {
         String unit =
                 spinnerUnit
                         .getSelectedItem()
-                        .toString();
+                        .toString()
+                        .trim();
 
 
         String expiryDate =
@@ -204,12 +253,14 @@ public class AddIngredientActivity extends AppCompatActivity {
                         .trim();
 
 
-        // VALIDATE NAME
+        // =====================================================
+        // VALIDATE INGREDIENT NAME
+        // =====================================================
 
         if (name.isEmpty()) {
 
             etIngredientName.setError(
-                    "Please enter an ingredient"
+                    "Please enter an ingredient name"
             );
 
             etIngredientName.requestFocus();
@@ -218,7 +269,23 @@ public class AddIngredientActivity extends AppCompatActivity {
         }
 
 
-        // VALIDATE QUANTITY
+        // Prevent extremely long ingredient names
+
+        if (name.length() > 50) {
+
+            etIngredientName.setError(
+                    "Ingredient name is too long"
+            );
+
+            etIngredientName.requestFocus();
+
+            return;
+        }
+
+
+        // =====================================================
+        // VALIDATE QUANTITY - EMPTY
+        // =====================================================
 
         if (quantityText.isEmpty()) {
 
@@ -232,12 +299,18 @@ public class AddIngredientActivity extends AppCompatActivity {
         }
 
 
+        // =====================================================
+        // VALIDATE QUANTITY - NUMBER
+        // =====================================================
+
         double quantity;
 
         try {
 
             quantity =
-                    Double.parseDouble(quantityText);
+                    Double.parseDouble(
+                            quantityText
+                    );
 
         } catch (NumberFormatException e) {
 
@@ -251,7 +324,9 @@ public class AddIngredientActivity extends AppCompatActivity {
         }
 
 
-        // QUANTITY MUST BE GREATER THAN ZERO
+        // =====================================================
+        // VALIDATE QUANTITY - POSITIVE
+        // =====================================================
 
         if (quantity <= 0) {
 
@@ -265,9 +340,44 @@ public class AddIngredientActivity extends AppCompatActivity {
         }
 
 
+        // =====================================================
+        // VALIDATE QUANTITY - REASONABLE LIMIT
+        // =====================================================
+
+        if (quantity > 100000) {
+
+            etQuantity.setError(
+                    "Please enter a smaller quantity"
+            );
+
+            etQuantity.requestFocus();
+
+            return;
+        }
+
+
+        // =====================================================
+        // VALIDATE UNIT
+        // =====================================================
+
+        if (unit.isEmpty()) {
+
+            Toast.makeText(
+                    this,
+                    "Please select a unit",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            return;
+        }
+
+
+        // =====================================================
         // UPDATE EXISTING INGREDIENT
+        // =====================================================
 
         if (editIngredientId != -1) {
+
 
             boolean result =
                     databaseHelper.updateIngredient(
@@ -303,7 +413,9 @@ public class AddIngredientActivity extends AppCompatActivity {
         }
 
 
+        // =====================================================
         // ADD NEW INGREDIENT
+        // =====================================================
 
         long result =
                 databaseHelper.addIngredient(

@@ -7,7 +7,9 @@
     android:background="#FFF8F0"
     android:padding="16dp">
 
+    <!-- ===================================================== -->
     <!-- TITLE -->
+    <!-- ===================================================== -->
 
     <TextView
         android:id="@+id/tvTitle"
@@ -28,42 +30,73 @@
         android:textSize="15sp"
         android:textColor="#666666"
         android:gravity="center"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="20dp" />
 
 
-    <!-- MY PANTRY SECTION BUTTON -->
+    <!-- ===================================================== -->
+    <!-- MY PANTRY DROPDOWN BUTTON -->
+    <!-- ===================================================== -->
 
     <Button
         android:id="@+id/btnPantryTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MY PANTRY"
+        android:text="MY PANTRY  ▼"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:backgroundTint="#2E7D32"
-        android:minHeight="48dp"
-        android:layout_marginBottom="10dp" />
+        android:minHeight="52dp"
+        android:layout_marginBottom="8dp" />
 
 
-    <!-- PANTRY LIST -->
+    <!-- ===================================================== -->
+    <!-- PANTRY CONTENT -->
+    <!-- ===================================================== -->
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerPantry"
+    <LinearLayout
+        android:id="@+id/pantryContent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingTop="4dp"
-        android:paddingBottom="12dp"
-        android:scrollbars="vertical"
-        android:overScrollMode="always"
-        android:nestedScrollingEnabled="false"
-        android:focusable="true"
-        android:clickable="true" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="#FFFFFF"
+        android:padding="8dp"
+        android:layout_marginBottom="12dp">
+
+        <!-- EMPTY PANTRY MESSAGE -->
+
+        <TextView
+            android:id="@+id/tvEmptyPantry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your pantry is empty.\n\nTap ADD INGREDIENT to get started."
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:padding="24dp"
+            android:visibility="gone" />
 
 
+        <!-- PANTRY LIST -->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerPantry"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:clipToPadding="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"
+            android:nestedScrollingEnabled="true" />
+
+    </LinearLayout>
+
+
+    <!-- ===================================================== -->
     <!-- ADD INGREDIENT -->
+    <!-- ===================================================== -->
 
     <Button
         android:id="@+id/btnAddIngredient"
@@ -74,12 +107,13 @@
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:backgroundTint="#2E7D32"
-        android:minHeight="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:minHeight="50dp"
+        android:layout_marginBottom="10dp" />
 
 
+    <!-- ===================================================== -->
     <!-- SUGGESTED RECIPES -->
+    <!-- ===================================================== -->
 
     <Button
         android:id="@+id/btnSuggestedRecipes"
@@ -90,11 +124,13 @@
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:backgroundTint="#F57C00"
-        android:minHeight="48dp"
-        android:layout_marginBottom="8dp" />
+        android:minHeight="50dp"
+        android:layout_marginBottom="10dp" />
 
 
+    <!-- ===================================================== -->
     <!-- SETTINGS -->
+    <!-- ===================================================== -->
 
     <Button
         android:id="@+id/btnSettings"
@@ -105,6 +141,6 @@
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:backgroundTint="#616161"
-        android:minHeight="48dp" />
+        android:minHeight="50dp" />
 
 </LinearLayout>
