@@ -1,6 +1,8 @@
 package com.example.smartpantrymanager;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -8,6 +10,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Calendar;
 
 public class AddIngredientActivity extends AppCompatActivity {
 
@@ -22,79 +26,43 @@ public class AddIngredientActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
 
-    // Used when editing an existing ingredient
     private int editIngredientId = -1;
 
+    private final String[] units = {
+            "pieces",
+            "kg",
+            "g",
+            "litres",
+            "ml",
+            "packets",
+            "cans",
+            "cups",
+            "items"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_ingredient);
 
-        setContentView(
-                R.layout.activity_add_ingredient
-        );
+        // --------------------------------------------------
+        // CONNECT XML VIEWS
+        // --------------------------------------------------
 
+        etIngredientName = findViewById(R.id.etIngredientName);
+        etQuantity = findViewById(R.id.etQuantity);
+        etExpiryDate = findViewById(R.id.etExpiryDate);
 
-        // =====================================================
-        // FIND VIEWS
-        // =====================================================
+        spinnerUnit = findViewById(R.id.spinnerUnit);
 
-        etIngredientName =
-                findViewById(
-                        R.id.etIngredientName
-                );
+        btnSaveIngredient = findViewById(R.id.btnSaveIngredient);
+        btnCancel = findViewById(R.id.btnCancel);
 
-        etQuantity =
-                findViewById(
-                        R.id.etQuantity
-                );
+        databaseHelper = new DatabaseHelper(this);
 
-        etExpiryDate =
-                findViewById(
-                        R.id.etExpiryDate
-                );
-
-        spinnerUnit =
-                findViewById(
-                        R.id.spinnerUnit
-                );
-
-        btnSaveIngredient =
-                findViewById(
-                        R.id.btnSaveIngredient
-                );
-
-        btnCancel =
-                findViewById(
-                        R.id.btnCancel
-                );
-
-
-        // =====================================================
-        // DATABASE
-        // =====================================================
-
-        databaseHelper =
-                new DatabaseHelper(this);
-
-
-        // =====================================================
-        // UNIT OPTIONS
-        // =====================================================
-
-        String[] units = {
-                "pieces",
-                "kg",
-                "g",
-                "litres",
-                "ml",
-                "packets",
-                "cans",
-                "cups",
-                "items"
-        };
-
+        // --------------------------------------------------
+        // UNIT SPINNER
+        // --------------------------------------------------
 
         ArrayAdapter<String> unitAdapter =
                 new ArrayAdapter<>(
@@ -103,20 +71,21 @@ public class AddIngredientActivity extends AppCompatActivity {
                         units
                 );
 
-
         unitAdapter.setDropDownViewResource(
                 android.R.layout.simple_spinner_dropdown_item
         );
 
+        spinnerUnit.setAdapter(unitAdapter);
 
-        spinnerUnit.setAdapter(
-                unitAdapter
-        );
+        // --------------------------------------------------
+        // EXPIRY DATE PICKER
+        // --------------------------------------------------
 
+        etExpiryDate.setOnClickListener(v -> showDatePicker());
 
-        // =====================================================
-        // CHECK IF EDITING
-        // =====================================================
+        // --------------------------------------------------
+        // CHECK IF EDITING AN EXISTING INGREDIENT
+        // --------------------------------------------------
 
         if (getIntent().hasExtra("ingredient_id")) {
 
@@ -126,104 +95,84 @@ public class AddIngredientActivity extends AppCompatActivity {
                             -1
                     );
 
-
             String name =
                     getIntent().getStringExtra(
                             "ingredient_name"
                     );
 
-
             double quantity =
                     getIntent().getDoubleExtra(
                             "ingredient_quantity",
-                            1
+                            0
                     );
-
 
             String unit =
                     getIntent().getStringExtra(
                             "ingredient_unit"
                     );
 
-
             String expiryDate =
                     getIntent().getStringExtra(
                             "ingredient_expiry"
                     );
 
-
-            // Put existing information into form
+            // Fill the form with existing values
 
             if (name != null) {
-
-                etIngredientName.setText(
-                        name
-                );
+                etIngredientName.setText(name);
             }
 
-
-            etQuantity.setText(
-                    String.valueOf(quantity)
-            );
-
+            if (quantity > 0) {
+                etQuantity.setText(
+                        String.valueOf(quantity)
+                );
+            }
 
             if (expiryDate != null) {
-
-                etExpiryDate.setText(
-                        expiryDate
-                );
+                etExpiryDate.setText(expiryDate);
             }
-
 
             // Select existing unit
 
             if (unit != null) {
 
-                for (int i = 0;
-                     i < units.length;
-                     i++) {
+                for (int i = 0; i < units.length; i++) {
 
                     if (units[i].equalsIgnoreCase(unit)) {
 
                         spinnerUnit.setSelection(i);
-
                         break;
                     }
                 }
             }
-
 
             btnSaveIngredient.setText(
                     "UPDATE INGREDIENT"
             );
         }
 
+        // --------------------------------------------------
+        // SAVE / UPDATE BUTTON
+        // --------------------------------------------------
 
-        // =====================================================
-        // SAVE / UPDATE
-        // =====================================================
-
-        btnSaveIngredient.setOnClickListener(
-                v -> saveIngredient()
+        btnSaveIngredient.setOnClickListener(v ->
+                saveIngredient()
         );
 
+        // --------------------------------------------------
+        // CANCEL BUTTON
+        // --------------------------------------------------
 
-        // =====================================================
-        // CANCEL
-        // =====================================================
-
-        btnCancel.setOnClickListener(
-                v -> finish()
+        btnCancel.setOnClickListener(v ->
+                finish()
         );
     }
 
-
-    // =========================================================
-    // SAVE INGREDIENT
-    // =========================================================
+    // ======================================================
+    // SAVE OR UPDATE INGREDIENT
+    // ======================================================
 
     private void saveIngredient() {
-
 
         String name =
                 etIngredientName
@@ -231,20 +180,11 @@ public class AddIngredientActivity extends AppCompatActivity {
                         .toString()
                         .trim();
 
-
         String quantityText =
                 etQuantity
                         .getText()
                         .toString()
                         .trim();
-
-
-        String unit =
-                spinnerUnit
-                        .getSelectedItem()
-                        .toString()
-                        .trim();
-
 
         String expiryDate =
                 etExpiryDate
@@ -252,12 +192,16 @@ public class AddIngredientActivity extends AppCompatActivity {
                         .toString()
                         .trim();
 
+        String unit =
+                spinnerUnit
+                        .getSelectedItem()
+                        .toString();
 
-        // =====================================================
-        // VALIDATE INGREDIENT NAME
-        // =====================================================
+        // --------------------------------------------------
+        // VALIDATE NAME
+        // --------------------------------------------------
 
-        if (name.isEmpty()) {
+        if (TextUtils.isEmpty(name)) {
 
             etIngredientName.setError(
                     "Please enter an ingredient name"
@@ -268,13 +212,10 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
-
-        // Prevent extremely long ingredient names
-
         if (name.length() > 50) {
 
             etIngredientName.setError(
-                    "Ingredient name is too long"
+                    "Ingredient name must be 50 characters or less"
             );
 
             etIngredientName.requestFocus();
@@ -282,12 +223,11 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
+        // --------------------------------------------------
+        // VALIDATE QUANTITY
+        // --------------------------------------------------
 
-        // =====================================================
-        // VALIDATE QUANTITY - EMPTY
-        // =====================================================
-
-        if (quantityText.isEmpty()) {
+        if (TextUtils.isEmpty(quantityText)) {
 
             etQuantity.setError(
                     "Please enter a quantity"
@@ -298,19 +238,12 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
-
-        // =====================================================
-        // VALIDATE QUANTITY - NUMBER
-        // =====================================================
-
         double quantity;
 
         try {
 
             quantity =
-                    Double.parseDouble(
-                            quantityText
-                    );
+                    Double.parseDouble(quantityText);
 
         } catch (NumberFormatException e) {
 
@@ -323,11 +256,6 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
-
-        // =====================================================
-        // VALIDATE QUANTITY - POSITIVE
-        // =====================================================
-
         if (quantity <= 0) {
 
             etQuantity.setError(
@@ -339,15 +267,10 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
-
-        // =====================================================
-        // VALIDATE QUANTITY - REASONABLE LIMIT
-        // =====================================================
-
         if (quantity > 100000) {
 
             etQuantity.setError(
-                    "Please enter a smaller quantity"
+                    "Quantity is too large"
             );
 
             etQuantity.requestFocus();
@@ -355,12 +278,11 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
-
-        // =====================================================
+        // --------------------------------------------------
         // VALIDATE UNIT
-        // =====================================================
+        // --------------------------------------------------
 
-        if (unit.isEmpty()) {
+        if (TextUtils.isEmpty(unit)) {
 
             Toast.makeText(
                     this,
@@ -371,13 +293,11 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
-
-        // =====================================================
+        // --------------------------------------------------
         // UPDATE EXISTING INGREDIENT
-        // =====================================================
+        // --------------------------------------------------
 
         if (editIngredientId != -1) {
-
 
             boolean result =
                     databaseHelper.updateIngredient(
@@ -388,12 +308,11 @@ public class AddIngredientActivity extends AppCompatActivity {
                             expiryDate
                     );
 
-
             if (result) {
 
                 Toast.makeText(
                         this,
-                        "Ingredient updated successfully!",
+                        name + " updated successfully!",
                         Toast.LENGTH_SHORT
                 ).show();
 
@@ -408,14 +327,12 @@ public class AddIngredientActivity extends AppCompatActivity {
                 ).show();
             }
 
-
             return;
         }
 
-
-        // =====================================================
+        // --------------------------------------------------
         // ADD NEW INGREDIENT
-        // =====================================================
+        // --------------------------------------------------
 
         long result =
                 databaseHelper.addIngredient(
@@ -424,7 +341,6 @@ public class AddIngredientActivity extends AppCompatActivity {
                         unit,
                         expiryDate
                 );
-
 
         if (result != -1) {
 
@@ -444,5 +360,48 @@ public class AddIngredientActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT
             ).show();
         }
+    }
+
+    // ======================================================
+    // DATE PICKER
+    // ======================================================
+
+    private void showDatePicker() {
+
+        Calendar calendar =
+                Calendar.getInstance();
+
+        int year =
+                calendar.get(Calendar.YEAR);
+
+        int month =
+                calendar.get(Calendar.MONTH);
+
+        int day =
+                calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog =
+                new DatePickerDialog(
+                        this,
+                        (view, selectedYear, selectedMonth, selectedDay) -> {
+
+                            String formattedDate =
+                                    String.format(
+                                            "%02d/%02d/%04d",
+                                            selectedDay,
+                                            selectedMonth + 1,
+                                            selectedYear
+                                    );
+
+                            etExpiryDate.setText(
+                                    formattedDate
+                            );
+                        },
+                        year,
+                        month,
+                        day
+                );
+
+        datePickerDialog.show();
     }
 }

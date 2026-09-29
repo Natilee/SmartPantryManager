@@ -15,7 +15,6 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
     private ArrayList<PantryItem> pantryItems;
 
-    // Interface for Edit and Delete clicks
     public interface OnPantryItemClickListener {
 
         void onEdit(PantryItem item);
@@ -25,7 +24,6 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
     private OnPantryItemClickListener listener;
 
-
     public PantryAdapter(
             ArrayList<PantryItem> pantryItems,
             OnPantryItemClickListener listener) {
@@ -33,7 +31,6 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         this.pantryItems = pantryItems;
         this.listener = listener;
     }
-
 
     @NonNull
     @Override
@@ -47,7 +44,6 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         return new PantryViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(
             @NonNull PantryViewHolder holder,
@@ -55,22 +51,31 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
 
         PantryItem item = pantryItems.get(position);
 
-
         holder.tvIngredientName.setText(
                 item.getName()
         );
 
+        // Display quantity without unnecessary decimal places
+        double quantity = item.getQuantity();
+
+        String quantityText;
+
+        if (quantity == Math.floor(quantity)) {
+            quantityText = String.valueOf((int) quantity);
+        } else {
+            quantityText = String.valueOf(quantity);
+        }
 
         holder.tvQuantity.setText(
                 "Quantity: " +
-                        item.getQuantity() +
+                        quantityText +
                         " " +
                         item.getUnit()
         );
 
-
+        // Display expiry information
         if (item.getExpiryDate() == null ||
-                item.getExpiryDate().isEmpty()) {
+                item.getExpiryDate().trim().isEmpty()) {
 
             holder.tvExpiry.setText(
                     "Expiry: Not provided"
@@ -84,36 +89,27 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
             );
         }
 
-
         // EDIT BUTTON
-
         holder.btnEdit.setOnClickListener(v -> {
 
             if (listener != null) {
-
                 listener.onEdit(item);
             }
         });
 
-
         // DELETE BUTTON
-
         holder.btnDelete.setOnClickListener(v -> {
 
             if (listener != null) {
-
                 listener.onDelete(item);
             }
         });
     }
 
-
     @Override
     public int getItemCount() {
-
         return pantryItems.size();
     }
-
 
     public static class PantryViewHolder
             extends RecyclerView.ViewHolder {
@@ -125,36 +121,30 @@ public class PantryAdapter extends RecyclerView.Adapter<PantryAdapter.PantryView
         Button btnEdit;
         Button btnDelete;
 
-
         public PantryViewHolder(
                 @NonNull View itemView) {
 
             super(itemView);
-
 
             tvIngredientName =
                     itemView.findViewById(
                             R.id.tvIngredientName
                     );
 
-
             tvQuantity =
                     itemView.findViewById(
                             R.id.tvQuantity
                     );
-
 
             tvExpiry =
                     itemView.findViewById(
                             R.id.tvExpiry
                     );
 
-
             btnEdit =
                     itemView.findViewById(
                             R.id.btnEdit
                     );
-
 
             btnDelete =
                     itemView.findViewById(
