@@ -16,6 +16,7 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerRecipes;
     private TextView tvNoRecipes;
+    private TextView tvRecipeCount;
     private Button btnBack;
 
     private DatabaseHelper databaseHelper;
@@ -25,49 +26,22 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
 
     private RecipeAdapter recipeAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_suggested_recipes);
 
+        recyclerRecipes = findViewById(R.id.recyclerRecipes);
+        tvNoRecipes = findViewById(R.id.tvNoRecipes);
+        tvRecipeCount = findViewById(R.id.tvRecipeCount);
+        btnBack = findViewById(R.id.btnBack);
 
-        // =====================================================
-        // FIND VIEWS
-        // =====================================================
-
-        recyclerRecipes =
-                findViewById(R.id.recyclerRecipes);
-
-        tvNoRecipes =
-                findViewById(R.id.tvNoRecipes);
-
-        btnBack =
-                findViewById(R.id.btnBack);
-
-
-        // =====================================================
-        // DATABASE
-        // =====================================================
-
-        databaseHelper =
-                new DatabaseHelper(this);
-
-
-        // =====================================================
-        // RECYCLER VIEW
-        // =====================================================
+        databaseHelper = new DatabaseHelper(this);
 
         recyclerRecipes.setLayoutManager(
                 new LinearLayoutManager(this)
         );
-
-
-        // =====================================================
-        // ADAPTER
-        // =====================================================
 
         recipeAdapter =
                 new RecipeAdapter(
@@ -104,32 +78,14 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                         }
                 );
 
-
-        recyclerRecipes.setAdapter(
-                recipeAdapter
-        );
-
-
-        // =====================================================
-        // BACK BUTTON
-        // =====================================================
+        recyclerRecipes.setAdapter(recipeAdapter);
 
         btnBack.setOnClickListener(v ->
                 finish()
         );
 
-
-        // =====================================================
-        // LOAD MATCHING RECIPES
-        // =====================================================
-
         findMatchingRecipes();
     }
-
-
-    // =========================================================
-    // REFRESH WHEN RETURNING TO THIS SCREEN
-    // =========================================================
 
     @Override
     protected void onResume() {
@@ -143,31 +99,19 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         }
     }
 
-
     // =========================================================
     // FIND MATCHING RECIPES
     // =========================================================
 
     private void findMatchingRecipes() {
 
-        // Get every recipe from the database
-
         allRecipes =
                 databaseHelper.getAllRecipes();
-
-
-        // Get everything currently in the pantry
 
         ArrayList<PantryItem> pantryItems =
                 databaseHelper.getAllIngredients();
 
-
-        // Remove old results
-
         matchingRecipes.clear();
-
-
-        // Check every recipe
 
         for (Recipe recipe : allRecipes) {
 
@@ -179,14 +123,10 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             }
         }
 
-
-        // Update RecyclerView
-
         recipeAdapter.notifyDataSetChanged();
 
-
         // =====================================================
-        // SHOW / HIDE NO RECIPES MESSAGE
+        // NO MATCHING RECIPES
         // =====================================================
 
         if (matchingRecipes.isEmpty()) {
@@ -195,8 +135,18 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                     View.GONE
             );
 
+            tvRecipeCount.setVisibility(
+                    View.GONE
+            );
+
             tvNoRecipes.setVisibility(
                     View.VISIBLE
+            );
+
+            tvNoRecipes.setText(
+                    "No recipes can be made with your current pantry.\n\n" +
+                            "Add the required ingredients and quantities " +
+                            "to see recipe suggestions."
             );
 
         } else {
@@ -205,12 +155,22 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                     View.VISIBLE
             );
 
+            tvRecipeCount.setVisibility(
+                    View.VISIBLE
+            );
+
             tvNoRecipes.setVisibility(
                     View.GONE
             );
+
+            tvRecipeCount.setText(
+                    matchingRecipes.size() +
+                            " recipe" +
+                            (matchingRecipes.size() == 1 ? "" : "s") +
+                            " available with your pantry"
+            );
         }
     }
-
 
     // =========================================================
     // STRICT RECIPE MATCHING
@@ -220,12 +180,8 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             Recipe recipe,
             ArrayList<PantryItem> pantryItems) {
 
-
         String ingredients =
                 recipe.getIngredients();
-
-
-        // Recipe must have ingredients
 
         if (ingredients == null ||
                 ingredients.trim().isEmpty()) {
@@ -233,40 +189,26 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             return false;
         }
 
-
-        // Example:
-        // Chicken:1;Rice:1;Avo:1
-
         String[] requiredIngredients =
                 ingredients.split(";");
 
-
-        // =====================================================
-        // EVERY INGREDIENT MUST BE AVAILABLE
-        // =====================================================
+        // Every required ingredient must be available.
 
         for (String required :
                 requiredIngredients) {
 
-
             String[] parts =
                     required.split(":");
-
-
-            // Invalid recipe ingredient format
 
             if (parts.length != 2) {
 
                 return false;
             }
 
-
             String requiredName =
                     parts[0].trim();
 
-
             double requiredQuantity;
-
 
             try {
 
@@ -280,55 +222,42 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                 return false;
             }
 
+            if (requiredQuantity <= 0) {
 
-            // =================================================
-            // ADD UP ALL MATCHING PANTRY QUANTITIES
-            // =================================================
+                return false;
+            }
 
             double pantryQuantity = 0;
 
+            // Add together all pantry entries
+            // matching this ingredient.
 
             for (PantryItem pantryItem :
                     pantryItems) {
 
-
-                String pantryName =
-                        pantryItem.getName();
-
-
                 if (ingredientsMatch(
-                        pantryName,
+                        pantryItem.getName(),
                         requiredName)) {
-
 
                     pantryQuantity +=
                             pantryItem.getQuantity();
                 }
             }
 
-
-            // =================================================
-            // REQUIRED QUANTITY MUST BE AVAILABLE
-            // =================================================
+            // The recipe is rejected if there is
+            // not enough of this ingredient.
 
             if (pantryQuantity <
                     requiredQuantity) {
-
-                // Even ONE missing ingredient
-                // means the recipe cannot be made.
 
                 return false;
             }
         }
 
-
-        // =====================================================
-        // ALL INGREDIENTS AND QUANTITIES ARE AVAILABLE
-        // =====================================================
+        // Every ingredient and quantity is available.
 
         return true;
     }
-
 
     // =========================================================
     // INGREDIENT NAME MATCHING
@@ -338,29 +267,24 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             String pantryName,
             String requiredName) {
 
-
         if (pantryName == null ||
                 requiredName == null) {
 
             return false;
         }
 
-
         String pantry =
                 normalizeIngredient(
                         pantryName
                 );
-
 
         String required =
                 normalizeIngredient(
                         requiredName
                 );
 
-
         return pantry.equals(required);
     }
-
 
     // =========================================================
     // NORMALIZE INGREDIENT NAMES
@@ -369,26 +293,25 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
     private String normalizeIngredient(
             String ingredient) {
 
+        if (ingredient == null) {
+
+            return "";
+        }
 
         String value =
                 ingredient
                         .trim()
-                        .toLowerCase();
+                        .toLowerCase()
+                        .replaceAll("\\s+", " ");
 
-
-        // =====================================================
-        // HANDLE COMMON SPELLING VARIATION
-        // =====================================================
+        // Handle common spelling variation.
 
         if (value.equals("patatoes")) {
 
             value = "potatoes";
         }
 
-
-        // =====================================================
-        // HANDLE PLURAL FORM
-        // =====================================================
+        // Handle simple plural forms.
 
         if (value.endsWith("s") &&
                 value.length() > 3) {
@@ -399,7 +322,6 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                             value.length() - 1
                     );
         }
-
 
         return value;
     }
