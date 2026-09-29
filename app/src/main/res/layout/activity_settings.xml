@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF8F0"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- TITLE -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#2E7D32"
+            android:gravity="center"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Manage your Smart Pantry Manager"
+            android:textSize="15sp"
+            android:textColor="#666666"
+            android:gravity="center"
+            android:layout_marginBottom="24dp" />
+
+        <!-- APP INFORMATION -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="App Information"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Smart Pantry Manager&#10;&#10;Use what you have. Waste less.&#10;&#10;Version 1.0"
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:padding="16dp"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="24dp" />
+
+        <!-- PANTRY INFORMATION -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pantry"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnClearPantry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CLEAR PANTRY"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#C62828"
+            android:minHeight="48dp"
+            android:layout_marginBottom="24dp" />
+
+        <!-- BACK BUTTON -->
+
+        <Button
+            android:id="@+id/btnBackToPantry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="BACK TO PANTRY"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2E7D32"
+            android:minHeight="48dp" />
+
+    </LinearLayout>
+
+</ScrollView>
