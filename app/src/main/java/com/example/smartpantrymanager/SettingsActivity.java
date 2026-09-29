@@ -14,82 +14,47 @@ public class SettingsActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
 
+        databaseHelper = new DatabaseHelper(this);
 
-        // FIND VIEWS
-
-        btnClearPantry =
-                findViewById(R.id.btnClearPantry);
-
-        btnBackToPantry =
-                findViewById(R.id.btnBackToPantry);
-
-
-        // DATABASE
-
-        databaseHelper =
-                new DatabaseHelper(this);
-
-
-        // CLEAR PANTRY
+        btnClearPantry = findViewById(R.id.btnClearPantry);
+        btnBackToPantry = findViewById(R.id.btnBackToPantry);
 
         btnClearPantry.setOnClickListener(v ->
                 showClearPantryConfirmation()
         );
-
-
-        // BACK TO PANTRY
 
         btnBackToPantry.setOnClickListener(v ->
                 finish()
         );
     }
 
-
-    // =========================================================
-    // CLEAR PANTRY CONFIRMATION
-    // =========================================================
-
     private void showClearPantryConfirmation() {
 
         new AlertDialog.Builder(this)
-
                 .setTitle("Clear Pantry?")
-
                 .setMessage(
-                        "Are you sure you want to delete " +
-                                "all ingredients from your pantry?"
+                        "Are you sure you want to delete all ingredients from your pantry?"
                 )
-
                 .setNegativeButton(
                         "CANCEL",
                         null
                 )
-
                 .setPositiveButton(
                         "CLEAR",
                         (dialog, which) -> clearPantry()
                 )
-
                 .show();
     }
-
-
-    // =========================================================
-    // CLEAR ALL INGREDIENTS
-    // =========================================================
 
     private void clearPantry() {
 
         databaseHelper.clearAllIngredients();
-
 
         Toast.makeText(
                 this,

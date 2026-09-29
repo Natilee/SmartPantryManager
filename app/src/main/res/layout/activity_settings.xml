@@ -12,9 +12,8 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- TITLE -->
-
         <TextView
+            android:id="@+id/tvSettingsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Settings"
@@ -22,9 +21,10 @@
             android:textStyle="bold"
             android:textColor="#2E7D32"
             android:gravity="center"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="6dp" />
 
         <TextView
+            android:id="@+id/tvSettingsSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Manage your Smart Pantry Manager"
@@ -33,60 +33,81 @@
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
-        <!-- APP INFORMATION -->
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="App Information"
-            android:textSize="20sp"
+            android:text="APP INFORMATION"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="10dp" />
+            android:textColor="#F57C00"
+            android:layout_marginBottom="8dp" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Smart Pantry Manager&#10;&#10;Use what you have. Waste less.&#10;&#10;Version 1.0"
-            android:textSize="16sp"
-            android:textColor="#555555"
-            android:padding="16dp"
+            android:orientation="vertical"
             android:background="#FFFFFF"
-            android:layout_marginBottom="24dp" />
+            android:padding="18dp"
+            android:layout_marginBottom="24dp">
 
-        <!-- PANTRY INFORMATION -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Smart Pantry Manager"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Manage pantry ingredients, reduce food waste and discover recipes using the ingredients you already have."
+                android:textSize="15sp"
+                android:textColor="#666666"
+                android:lineSpacingExtra="3dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Version 1.0"
+                android:textSize="14sp"
+                android:textColor="#888888"
+                android:layout_marginTop="12dp" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pantry"
-            android:textSize="20sp"
+            android:text="PANTRY MANAGEMENT"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="10dp" />
+            android:textColor="#F57C00"
+            android:layout_marginBottom="8dp" />
 
         <Button
             android:id="@+id/btnClearPantry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="CLEAR PANTRY"
+            android:text="CLEAR ALL PANTRY ITEMS"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:backgroundTint="#C62828"
-            android:minHeight="48dp"
-            android:layout_marginBottom="24dp" />
-
-        <!-- BACK BUTTON -->
+            android:minHeight="52dp"
+            android:layout_marginBottom="12dp" />
 
         <Button
             android:id="@+id/btnBackToPantry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="BACK TO PANTRY"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:backgroundTint="#2E7D32"
-            android:minHeight="48dp" />
+            android:minHeight="52dp" />
 
     </LinearLayout>
 
