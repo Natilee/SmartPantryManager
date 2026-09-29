@@ -11,190 +11,99 @@ public class RecipeDetailActivity extends AppCompatActivity {
     private TextView tvDetailRecipeName;
     private TextView tvDetailRecipeIngredients;
     private TextView tvDetailRecipeMethod;
-
     private Button btnBackToRecipes;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
-        setContentView(
-                R.layout.activity_recipe_detail
-        );
-
-
-        // =====================================================
-        // FIND VIEWS
-        // =====================================================
+        setContentView(R.layout.activity_recipe_detail);
 
         tvDetailRecipeName =
-                findViewById(
-                        R.id.tvDetailRecipeName
-                );
+                findViewById(R.id.tvDetailRecipeName);
 
         tvDetailRecipeIngredients =
-                findViewById(
-                        R.id.tvDetailRecipeIngredients
-                );
+                findViewById(R.id.tvDetailRecipeIngredients);
 
         tvDetailRecipeMethod =
-                findViewById(
-                        R.id.tvDetailRecipeMethod
-                );
+                findViewById(R.id.tvDetailRecipeMethod);
 
         btnBackToRecipes =
-                findViewById(
-                        R.id.btnBackToRecipes
-                );
-
-
-        // =====================================================
-        // GET RECIPE INFORMATION
-        // =====================================================
+                findViewById(R.id.btnBackToRecipes);
 
         String recipeName =
-                getIntent().getStringExtra(
-                        "recipe_name"
-                );
+                getIntent().getStringExtra("recipe_name");
 
         String recipeIngredients =
-                getIntent().getStringExtra(
-                        "recipe_ingredients"
-                );
+                getIntent().getStringExtra("recipe_ingredients");
 
         String recipeMethod =
-                getIntent().getStringExtra(
-                        "recipe_method"
-                );
+                getIntent().getStringExtra("recipe_method");
 
-
-        // =====================================================
-        // DISPLAY RECIPE NAME
-        // =====================================================
-
-        if (recipeName != null &&
-                !recipeName.trim().isEmpty()) {
-
-            tvDetailRecipeName.setText(
-                    recipeName
-            );
+        if (recipeName == null || recipeName.trim().isEmpty()) {
+            recipeName = "Recipe";
         }
 
+        if (recipeIngredients == null ||
+                recipeIngredients.trim().isEmpty()) {
 
-        // =====================================================
-        // DISPLAY INGREDIENTS
-        // =====================================================
-
-        if (recipeIngredients != null &&
-                !recipeIngredients.trim().isEmpty()) {
-
-            tvDetailRecipeIngredients.setText(
-                    formatIngredients(
-                            recipeIngredients
-                    )
-            );
-
-        } else {
-
-            tvDetailRecipeIngredients.setText(
-                    "No ingredients available."
-            );
+            recipeIngredients =
+                    "No ingredients information available.";
         }
 
+        if (recipeMethod == null ||
+                recipeMethod.trim().isEmpty()) {
 
-        // =====================================================
-        // DISPLAY METHOD
-        // =====================================================
-
-        if (recipeMethod != null &&
-                !recipeMethod.trim().isEmpty()) {
-
-            tvDetailRecipeMethod.setText(
-                    recipeMethod
-            );
-
-        } else {
-
-            tvDetailRecipeMethod.setText(
-                    "No preparation method available."
-            );
+            recipeMethod =
+                    "No preparation method available.";
         }
 
+        tvDetailRecipeName.setText(recipeName);
 
-        // =====================================================
-        // BACK BUTTON
-        // =====================================================
-
-        btnBackToRecipes.setOnClickListener(v ->
-                finish()
+        tvDetailRecipeIngredients.setText(
+                formatIngredients(recipeIngredients)
         );
+
+        tvDetailRecipeMethod.setText(recipeMethod);
+
+        btnBackToRecipes.setOnClickListener(v -> finish());
     }
 
+    private String formatIngredients(String ingredients) {
 
-    // =========================================================
-    // FORMAT INGREDIENTS
-    // =========================================================
-
-    private String formatIngredients(
-            String ingredients) {
-
-
-        if (ingredients == null ||
-                ingredients.trim().isEmpty()) {
-
-            return "";
-        }
-
-
-        String[] parts =
-                ingredients.split(";");
-
-
-        StringBuilder result =
+        StringBuilder formatted =
                 new StringBuilder();
 
+        String[] ingredientList =
+                ingredients.split(";");
 
-        for (String part : parts) {
+        for (String ingredient : ingredientList) {
 
+            String[] parts =
+                    ingredient.split(":");
 
-            String[] ingredient =
-                    part.split(":");
+            if (parts.length == 2) {
 
+                String name =
+                        parts[0].trim();
 
-            if (ingredient.length >= 1) {
+                String quantity =
+                        parts[1].trim();
 
+                formatted.append("• ")
+                        .append(name)
+                        .append("  × ")
+                        .append(quantity)
+                        .append("\n");
 
-                if (result.length() > 0) {
+            } else {
 
-                    result.append("\n");
-                }
-
-
-                // Ingredient name
-
-                result.append("• ");
-
-                result.append(
-                        ingredient[0].trim()
-                );
-
-
-                // Required quantity
-
-                if (ingredient.length >= 2) {
-
-                    result.append(" × ");
-
-                    result.append(
-                            ingredient[1].trim()
-                    );
-                }
+                formatted.append("• ")
+                        .append(ingredient.trim())
+                        .append("\n");
             }
         }
 
-
-        return result.toString();
+        return formatted.toString().trim();
     }
 }

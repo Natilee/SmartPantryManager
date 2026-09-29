@@ -1,92 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#FFF8F0"
-    android:fillViewport="true">
+    android:padding="16dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvDetailRecipeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:text="Chicken Bowl"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
 
-        <!-- RECIPE TITLE -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/tvDetailRecipeName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chicken Bowl"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:textColor="#2E7D32"
-            android:gravity="center"
-            android:layout_marginBottom="20dp" />
+            android:orientation="vertical">
 
-        <!-- INGREDIENTS TITLE -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="INGREDIENTS"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#F57C00"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ingredients"
-            android:textSize="21sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/tvDetailRecipeIngredients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="• Chicken × 1&#10;• Rice × 1"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp" />
 
-        <!-- INGREDIENTS -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="PREPARATION"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#F57C00"
+                android:layout_marginBottom="8dp" />
 
-        <TextView
-            android:id="@+id/tvDetailRecipeIngredients"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Chicken&#10;Rice&#10;Avo&#10;Feta Cheese"
-            android:textSize="17sp"
-            android:textColor="#555555"
-            android:lineSpacingExtra="6dp"
-            android:padding="16dp"
-            android:background="#FFFFFF"
-            android:layout_marginBottom="24dp" />
+            <TextView
+                android:id="@+id/tvDetailRecipeMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Preparation method"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:background="#FFFFFF"
+                android:padding="16dp"
+                android:lineSpacingExtra="4dp" />
 
-        <!-- METHOD TITLE -->
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Preparation Method"
-            android:textSize="21sp"
-            android:textStyle="bold"
-            android:textColor="#333333"
-            android:layout_marginBottom="8dp" />
+    </ScrollView>
 
-        <!-- METHOD -->
+    <Button
+        android:id="@+id/btnBackToRecipes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="BACK TO RECIPES"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#2E7D32"
+        android:minHeight="50dp"
+        android:layout_marginTop="12dp" />
 
-        <TextView
-            android:id="@+id/tvDetailRecipeMethod"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Cook the chicken until fully cooked."
-            android:textSize="17sp"
-            android:textColor="#555555"
-            android:lineSpacingExtra="6dp"
-            android:padding="16dp"
-            android:background="#FFFFFF"
-            android:layout_marginBottom="24dp" />
-
-        <!-- BACK BUTTON -->
-
-        <Button
-            android:id="@+id/btnBackToRecipes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="BACK TO RECIPES"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#2E7D32"
-            android:minHeight="48dp" />
-
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>
